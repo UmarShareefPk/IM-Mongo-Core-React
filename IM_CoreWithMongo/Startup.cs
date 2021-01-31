@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using IM.Common;
 using IM.Hubs;
+using IM.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -12,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Serialization;
 
 namespace IM_Core
@@ -50,6 +52,15 @@ namespace IM_Core
                         .AllowCredentials();
                 });
             });
+
+            services.Configure<IMDatabaseSettings>(
+           Configuration.GetSection(nameof(IMDatabaseSettings)));
+
+            services.AddSingleton<IIMDatabaseSettings>(sp =>
+                sp.GetRequiredService<IOptions<IMDatabaseSettings>>().Value);
+
+            services.AddControllers()
+            .AddNewtonsoftJson(options => options.UseMemberCasing());
 
         }
 

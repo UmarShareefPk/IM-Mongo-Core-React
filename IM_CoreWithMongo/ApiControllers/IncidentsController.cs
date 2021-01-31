@@ -11,6 +11,7 @@ using IM.Models;
 using IM.SQL;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Driver;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -21,9 +22,19 @@ namespace IM_Core.ApiControllers
     public class IncidentsController : ControllerBase
     {
         private readonly IHostingEnvironment _hostingEnvironment;
-        public IncidentsController(IHostingEnvironment hostingEnvironment)
+        public IncidentsController(IHostingEnvironment hostingEnvironment, IIMDatabaseSettings settings)
         {
             _hostingEnvironment = hostingEnvironment;
+            var client = new MongoClient(settings.ConnectionString);
+            var database = client.GetDatabase(settings.DatabaseName);
+
+            var col  = database.GetCollection<User>("Users");
+            var ss = col.Find(user => true).ToList();  //all
+           // _books.Find<Book>(book => book.Id == id).FirstOrDefault(); //by Id
+           // _books.InsertOne(book);
+           // _books.ReplaceOne(book => book.Id == id, bookIn);
+           // _books.DeleteOne(book => book.Id == bookIn.Id);
+           // _books.DeleteOne(book => book.Id == id);
         }
 
         [HttpPost("AddIncident")]
